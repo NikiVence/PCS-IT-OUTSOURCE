@@ -16,23 +16,34 @@
     </properties>
 
     <dependencies>
+
+        <!-- ============================================================ -->
+        <!-- PostgreSQL JDBC драйвер                                      -->
+        <!-- ============================================================ -->
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>8.3.0</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.2</version>
         </dependency>
 
+        <!-- ============================================================ -->
+        <!-- Apache POI — экспорт данных в Excel .xlsx                    -->
+        <!-- ============================================================ -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>5.2.5</version>
         </dependency>
 
+        <!-- ============================================================ -->
+        <!-- jBCrypt — хэширование паролей (REQ-022)                      -->
+        <!-- ============================================================ -->
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
         </dependency>
+
     </dependencies>
 
     <build>

@@ -8,8 +8,8 @@
 | 1 | SQL schema + seed | Ильгиз | ✅ Done |
 | 2.1 | Enum'ы (4 шт.) | Ильгиз | ✅ Done |
 | 2.2 | Модель (User, ServiceRequest) | Ильгиз | ✅ Done |
-| 2.3 | Исключения (3 шт.) | Ильгиз | 🔄 In Progress |
-| 2.4 | DatabaseManager | ? | ⚪ |
+| 2.3 | Исключения (3 шт.) | Ильгиз | ✅ Done |
+| 2.4 | DatabaseManager | Ильгиз | ✅ Done |
 | 3 | Repository | ? | ⚪ |
 | 4 | Service + бизнес-правила | ? | ⚪ |
 | 5 | UI меню | ? | ⚪ |
