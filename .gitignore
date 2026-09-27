@@ -22,3 +22,6 @@ logs/
 
 # DB backups
 *.sql.bak
+
+# Local DB credentials
+src/main/resources/db.properties

@@ -1,0 +1,13 @@
+# ============================================================
+# Шаблон конфигурации подключения к PostgreSQL
+# ============================================================
+# Как использовать:
+#   1. Скопируй этот файл в db.properties
+#   2. Впиши свои данные (username и password от PostgreSQL)
+#
+#   cp src/main/resources/db.properties.example src/main/resources/db.properties
+# ============================================================
+
+db.url=jdbc:postgresql://localhost:5432/it_outsource
+db.user=YOUR_USERNAME
+db.password=YOUR_PASSWORD
