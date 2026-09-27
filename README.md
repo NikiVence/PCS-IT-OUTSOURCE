@@ -5,7 +5,7 @@
 | Этап | Задача | Ответственный | Статус |
 |------|--------|---------------|--------|
 | 0 | Maven + структура | Ильгиз | ✅ Done |
-| 1 | SQL schema + seed | ? | ⚪ |
+| 1 | SQL schema + seed | Ильгиз | ✅ Done |
 | 2 | Model + DatabaseManager | ? | ⚪ |
 | 3 | Repository | ? | ⚪ |
 | 4 | Service + бизнес-правила | ? | ⚪ |
