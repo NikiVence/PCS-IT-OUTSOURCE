@@ -1,4 +1,4 @@
-# PCS-IT-OUTSOURSE
+# PCS-IT-OUTSOURCE
 
 ## Прогресс КР 1
 
@@ -6,7 +6,10 @@
 |------|--------|---------------|--------|
 | 0 | Maven + структура | Ильгиз | ✅ Done |
 | 1 | SQL schema + seed | Ильгиз | ✅ Done |
-| 2 | Model + DatabaseManager | ? | ⚪ |
+| 2.1 | Enum'ы (4 шт.) | Ильгиз | ✅ Done |
+| 2.2 | Модель (User, ServiceRequest) | Ильгиз | ✅ Done |
+| 2.3 | Исключения (3 шт.) | Ильгиз | 🔄 In Progress |
+| 2.4 | DatabaseManager | ? | ⚪ |
 | 3 | Repository | ? | ⚪ |
 | 4 | Service + бизнес-правила | ? | ⚪ |
 | 5 | UI меню | ? | ⚪ |
