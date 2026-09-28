@@ -10,6 +10,7 @@ import ru.mirea.project.model.User;
 import ru.mirea.project.model.UserRole;
 import ru.mirea.project.repository.ServiceRequestRepository;
 import ru.mirea.project.repository.UserRepository;
+import ru.mirea.project.repository.CrudRepository;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -19,15 +20,15 @@ import java.util.Locale;
 
 public class ServiceRequestService {
 
-    private final ServiceRequestRepository requestRepository;
-    private final UserRepository userRepository;
+    private final CrudRepository<ServiceRequest> requestRepository;
+    private final CrudRepository<User> userRepository;
 
     public ServiceRequestService() {
         this(new ServiceRequestRepository(), new UserRepository());
     }
 
-    public ServiceRequestService(ServiceRequestRepository requestRepository,
-                                 UserRepository userRepository) {
+    public ServiceRequestService(CrudRepository<ServiceRequest> requestRepository,
+                                 CrudRepository<User> userRepository) {
         this.requestRepository = requestRepository;
         this.userRepository = userRepository;
     }
@@ -184,9 +185,11 @@ public class ServiceRequestService {
         return existing;
     }
 
-    public void deleteRequest(Integer id) throws EntityNotFoundException, BusinessException {
+    public void deleteRequest(Integer id) throws EntityNotFoundException {
         getRequestById(id);
-        throw new BusinessException("Заявку нельзя удалить; её можно только закрыть");
+        if (!requestRepository.deleteById(id)) {
+            throw new EntityNotFoundException("ServiceRequest", id);
+        }
     }
 
     public ServiceRequest assignExecutor(Integer requestId, Integer executorId)

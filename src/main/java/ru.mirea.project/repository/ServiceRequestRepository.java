@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ServiceRequestRepository {
+public class ServiceRequestRepository implements CrudRepository<ServiceRequest> {
 
     private final DatabaseManager databaseManager;
 
@@ -30,6 +30,7 @@ public class ServiceRequestRepository {
         this.databaseManager = databaseManager;
     }
 
+    @Override
     public ServiceRequest create(ServiceRequest request) {
         String sql = "INSERT INTO requests (title, description, category, status, priority, " +
                 "client_id, executor_id, taken_at, closed_at, rating) " +
@@ -58,6 +59,7 @@ public class ServiceRequestRepository {
         }
     }
 
+    @Override
     public Optional<ServiceRequest> findById(Integer id) {
         String sql = "SELECT * FROM requests WHERE id = ?";
 
@@ -73,6 +75,7 @@ public class ServiceRequestRepository {
         }
     }
 
+    @Override
     public List<ServiceRequest> findAll() {
         String sql = "SELECT * FROM requests ORDER BY id";
         List<ServiceRequest> requests = new ArrayList<>();
@@ -97,6 +100,7 @@ public class ServiceRequestRepository {
         return findAllByUserId("SELECT * FROM requests WHERE executor_id = ? ORDER BY id", executorId);
     }
 
+    @Override
     public boolean update(ServiceRequest request) {
         String sql = "UPDATE requests SET title = ?, description = ?, " +
                 "category = ?::request_category, status = ?::request_status, " +
@@ -123,6 +127,7 @@ public class ServiceRequestRepository {
         }
     }
 
+    @Override
     public boolean deleteById(Integer id) {
         String sql = "DELETE FROM requests WHERE id = ?";
 

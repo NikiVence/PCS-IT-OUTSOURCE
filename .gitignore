@@ -25,3 +25,7 @@ logs/
 
 # Local DB credentials
 src/main/resources/db.properties
+
+# Generated reports and local build cache
+reports/
+.m2/

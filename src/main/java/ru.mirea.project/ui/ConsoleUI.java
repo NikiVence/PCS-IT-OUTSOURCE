@@ -11,7 +11,11 @@ import ru.mirea.project.model.User;
 import ru.mirea.project.model.UserRole;
 import ru.mirea.project.service.ServiceRequestService;
 import ru.mirea.project.service.UserService;
+import ru.mirea.project.service.ExcelExportService;
 
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,7 +39,7 @@ public class ConsoleUI {
         try {
             while (true) {
                 printMainMenu();
-                int choice = readChoice("Выберите действие: ", 0, 4,
+                int choice = readChoice("Выберите действие: ", 0, 6,
                         "Ошибка: выберите существующий пункт меню.");
                 switch (choice) {
                     case 1 -> userMenu();
@@ -44,6 +48,14 @@ public class ConsoleUI {
                     case 4 -> {
                         try {
                             showStatistics();
+                        } catch (DatabaseException e) {
+                            printDatabaseError(e);
+                        }
+                    }
+                    case 5 -> exportExcel();
+                    case 6 -> {
+                        try {
+                            showDatabaseTables();
                         } catch (DatabaseException e) {
                             printDatabaseError(e);
                         }
@@ -253,6 +265,44 @@ public class ConsoleUI {
         }
     }
 
+    private void exportExcel() {
+        String destination = readRequiredText("Путь к новому файлу .xlsx: ").trim();
+        try {
+            Path file = new ExcelExportService().export(Path.of(destination),
+                    userService.getAllUsers(), requestService.getAllRequests(), requestService.getStatistics());
+            System.out.println("Отчёт Excel сохранён: " + file);
+        } catch (FileAlreadyExistsException e) {
+            System.out.println("Ошибка: файл уже существует. Укажите другое имя.");
+        } catch (IOException e) {
+            System.out.println("Не удалось сохранить отчёт Excel: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ошибка экспорта: " + e.getMessage());
+        } catch (DatabaseException e) {
+            printDatabaseError(e);
+        }
+    }
+
+    private void showDatabaseTables() {
+        System.out.println("\n--- Таблица users (без хэшей паролей) ---");
+        List<User> users = userService.getAllUsers();
+        if (users.isEmpty()) {
+            System.out.println("Пользователи не найдены.");
+        }
+        for (User user : users) {
+            printUser(user);
+            System.out.println();
+        }
+        System.out.println("\n--- Таблица requests ---");
+        List<ServiceRequest> requests = requestService.getAllRequests();
+        if (requests.isEmpty()) {
+            System.out.println("Заявки не найдены.");
+        }
+        for (ServiceRequest request : requests) {
+            printRequestDetails(request);
+            System.out.println();
+        }
+    }
+
     private void printRequests(List<ServiceRequest> requests) {
         if (requests.isEmpty()) {
             System.out.println("Заявки не найдены.");
@@ -315,7 +365,7 @@ public class ConsoleUI {
         System.out.println("Оценка сохранена.");
     }
 
-    private void deleteRequest() throws EntityNotFoundException, BusinessException {
+    private void deleteRequest() throws EntityNotFoundException {
         int id = readPositiveInt("Введите ID заявки: ");
         if (!confirm("Вы действительно хотите удалить заявку? (y/n): ")) {
             System.out.println("Удаление отменено.");
@@ -492,6 +542,8 @@ public class ConsoleUI {
         System.out.println("2. Заявки");
         System.out.println("3. Поиск, фильтрация и сортировка");
         System.out.println("4. Статистика");
+        System.out.println("5. Экспорт заявок и статистики в Excel");
+        System.out.println("6. Вывести таблицы базы данных");
         System.out.println("0. Выход");
     }
 

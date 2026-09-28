@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepository {
+public class UserRepository implements CrudRepository<User> {
 
     private final DatabaseManager databaseManager;
 
@@ -26,6 +26,7 @@ public class UserRepository {
         this.databaseManager = databaseManager;
     }
 
+    @Override
     public User create(User user) {
         String sql = "INSERT INTO users (username, password_hash, full_name, email, role) " +
                 "VALUES (?, ?, ?, ?, ?::user_role) RETURNING *";
@@ -47,6 +48,7 @@ public class UserRepository {
         }
     }
 
+    @Override
     public Optional<User> findById(Integer id) {
         String sql = "SELECT * FROM users WHERE id = ?";
 
@@ -77,6 +79,7 @@ public class UserRepository {
         }
     }
 
+    @Override
     public List<User> findAll() {
         String sql = "SELECT * FROM users ORDER BY id";
         List<User> users = new ArrayList<>();
@@ -93,6 +96,7 @@ public class UserRepository {
         }
     }
 
+    @Override
     public boolean update(User user) {
         String sql = "UPDATE users SET username = ?, password_hash = ?, full_name = ?, " +
                 "email = ?, role = ?::user_role WHERE id = ?";
@@ -111,6 +115,7 @@ public class UserRepository {
         }
     }
 
+    @Override
     public boolean deleteById(Integer id) {
         String sql = "DELETE FROM users WHERE id = ?";
 
