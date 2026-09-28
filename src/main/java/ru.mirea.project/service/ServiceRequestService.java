@@ -12,7 +12,10 @@ import ru.mirea.project.repository.ServiceRequestRepository;
 import ru.mirea.project.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class ServiceRequestService {
 
@@ -62,6 +65,89 @@ public class ServiceRequestService {
 
     public List<ServiceRequest> getAllRequests() {
         return requestRepository.findAll();
+    }
+
+    public List<ServiceRequest> searchByTitle(String query) throws BusinessException {
+        requireText(query, "Строка поиска");
+        String queryLowerCase = query.trim().toLowerCase(Locale.ROOT);
+
+        return requestRepository.findAll().stream()
+                .filter(request -> request.getTitle() != null
+                        && request.getTitle().toLowerCase(Locale.ROOT).contains(queryLowerCase))
+                .toList();
+    }
+
+    public List<ServiceRequest> searchByDescription(String query) throws BusinessException {
+        requireText(query, "Строка поиска");
+        String queryLowerCase = query.trim().toLowerCase(Locale.ROOT);
+
+        return requestRepository.findAll().stream()
+                .filter(request -> request.getDescription() != null
+                        && request.getDescription().toLowerCase(Locale.ROOT).contains(queryLowerCase))
+                .toList();
+    }
+
+    public List<ServiceRequest> filterByStatus(RequestStatus status) {
+        return requestRepository.findAll().stream()
+                .filter(request -> request.getStatus() == status)
+                .toList();
+    }
+
+    public List<ServiceRequest> filterByPriority(RequestPriority priority) {
+        return requestRepository.findAll().stream()
+                .filter(request -> request.getPriority() == priority)
+                .toList();
+    }
+
+    public List<ServiceRequest> sortByCreatedAtNewest() {
+        return requestRepository.findAll().stream()
+                .sorted(Comparator.comparing(
+                        ServiceRequest::getCreatedAt,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
+                .toList();
+    }
+
+    public List<ServiceRequest> sortByPriorityDescending() {
+        return requestRepository.findAll().stream()
+                .sorted(Comparator.comparing(
+                        ServiceRequest::getPriority,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
+                .toList();
+    }
+
+    public LinkedHashMap<String, Number> getStatistics() {
+        List<User> users = userRepository.findAll();
+        List<ServiceRequest> requests = requestRepository.findAll();
+
+        long newRequests = requests.stream()
+                .filter(request -> request.getStatus() == RequestStatus.NEW)
+                .count();
+        long activeRequests = requests.stream()
+                .filter(request -> request.getStatus() == RequestStatus.IN_PROGRESS
+                        || request.getStatus() == RequestStatus.WAITING)
+                .count();
+        long closedRequests = requests.stream()
+                .filter(request -> request.getStatus() == RequestStatus.CLOSED)
+                .count();
+        long highPriorityRequests = requests.stream()
+                .filter(request -> request.getPriority() == RequestPriority.HIGH)
+                .count();
+        double averageRating = requests.stream()
+                .filter(request -> request.getStatus() == RequestStatus.CLOSED)
+                .filter(request -> request.getRating() != null && request.getRating() != 0)
+                .mapToInt(ServiceRequest::getRating)
+                .average()
+                .orElse(0.0);
+
+        LinkedHashMap<String, Number> statistics = new LinkedHashMap<>();
+        statistics.put("Всего пользователей", (long) users.size());
+        statistics.put("Всего заявок", (long) requests.size());
+        statistics.put("Новых заявок", newRequests);
+        statistics.put("Активных заявок", activeRequests);
+        statistics.put("Закрытых заявок", closedRequests);
+        statistics.put("Заявок высокого приоритета", highPriorityRequests);
+        statistics.put("Средняя оценка", averageRating);
+        return statistics;
     }
 
     public ServiceRequest updateRequest(ServiceRequest changes, Integer actingUserId)

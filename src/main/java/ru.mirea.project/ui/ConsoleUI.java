@@ -13,6 +13,8 @@ import ru.mirea.project.service.ServiceRequestService;
 import ru.mirea.project.service.UserService;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Scanner;
@@ -33,11 +35,19 @@ public class ConsoleUI {
         try {
             while (true) {
                 printMainMenu();
-                int choice = readChoice("Выберите действие: ", 0, 2,
+                int choice = readChoice("Выберите действие: ", 0, 4,
                         "Ошибка: выберите существующий пункт меню.");
                 switch (choice) {
                     case 1 -> userMenu();
                     case 2 -> requestMenu();
+                    case 3 -> requestSearchMenu();
+                    case 4 -> {
+                        try {
+                            showStatistics();
+                        } catch (DatabaseException e) {
+                            printDatabaseError(e);
+                        }
+                    }
                     case 0 -> {
                         System.out.println("Работа приложения завершена.");
                         return;
@@ -98,6 +108,30 @@ public class ConsoleUI {
                 System.out.println("Ошибка: " + e.getMessage());
             } catch (EntityNotFoundException e) {
                 printNotFoundError(e);
+            } catch (DatabaseException e) {
+                printDatabaseError(e);
+            }
+        }
+    }
+
+    private void requestSearchMenu() {
+        while (true) {
+            printRequestSearchMenu();
+            try {
+                int choice = readChoice("Выберите действие: ", 0, 6,
+                        "Ошибка: выберите существующий пункт меню.");
+                switch (choice) {
+                    case 1 -> searchRequestsByTitle();
+                    case 2 -> searchRequestsByDescription();
+                    case 3 -> printRequests(requestService.filterByStatus(readStatus()));
+                    case 4 -> printRequests(requestService.filterByPriority(readPriority()));
+                    case 5 -> printRequests(requestService.sortByCreatedAtNewest());
+                    case 6 -> printRequests(requestService.sortByPriorityDescending());
+                    case 0 -> { return; }
+                    default -> throw new IllegalStateException("Недопустимый пункт меню поиска");
+                }
+            } catch (BusinessException e) {
+                System.out.println("Ошибка: " + e.getMessage());
             } catch (DatabaseException e) {
                 printDatabaseError(e);
             }
@@ -190,7 +224,36 @@ public class ConsoleUI {
     }
 
     private void showAllRequests() {
-        List<ServiceRequest> requests = requestService.getAllRequests();
+        printRequests(requestService.getAllRequests());
+    }
+
+    private void searchRequestsByTitle() throws BusinessException {
+        String query = readRequiredText("Введите часть заголовка: ");
+        printRequests(requestService.searchByTitle(query));
+    }
+
+    private void searchRequestsByDescription() throws BusinessException {
+        String query = readRequiredText("Введите часть описания: ");
+        printRequests(requestService.searchByDescription(query));
+    }
+
+    private void showStatistics() {
+        Map<String, Number> statistics = requestService.getStatistics();
+
+        System.out.println("\n========================================");
+        System.out.println("              СТАТИСТИКА");
+        System.out.println("========================================");
+        for (Map.Entry<String, Number> entry : statistics.entrySet()) {
+            Number value = entry.getValue();
+            if (value instanceof Double) {
+                System.out.printf(Locale.US, "%s: %.2f%n", entry.getKey(), value.doubleValue());
+            } else {
+                System.out.printf("%s: %d%n", entry.getKey(), value.longValue());
+            }
+        }
+    }
+
+    private void printRequests(List<ServiceRequest> requests) {
         if (requests.isEmpty()) {
             System.out.println("Заявки не найдены.");
             return;
@@ -425,7 +488,11 @@ public class ConsoleUI {
         System.out.println("              IT-OUTSOURCE");
         System.out.println("       Система технической поддержки");
         System.out.println("========================================");
-        System.out.println("1. Пользователи\n2. Заявки\n0. Выход");
+        System.out.println("1. Пользователи");
+        System.out.println("2. Заявки");
+        System.out.println("3. Поиск, фильтрация и сортировка");
+        System.out.println("4. Статистика");
+        System.out.println("0. Выход");
     }
 
     private void printUserMenu() {
@@ -453,6 +520,19 @@ public class ConsoleUI {
         System.out.println("6. Изменить статус");
         System.out.println("7. Поставить оценку");
         System.out.println("8. Удалить заявку");
+        System.out.println("0. Назад");
+    }
+
+    private void printRequestSearchMenu() {
+        System.out.println("\n========================================");
+        System.out.println("   ПОИСК, ФИЛЬТРАЦИЯ И СОРТИРОВКА");
+        System.out.println("========================================");
+        System.out.println("1. Поиск по части заголовка");
+        System.out.println("2. Поиск по части описания");
+        System.out.println("3. Фильтр по статусу");
+        System.out.println("4. Фильтр по приоритету");
+        System.out.println("5. Сортировка по дате (сначала новые)");
+        System.out.println("6. Сортировка по приоритету (HIGH, MEDIUM, LOW)");
         System.out.println("0. Назад");
     }
 }
