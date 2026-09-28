@@ -41,6 +41,14 @@
             <version>5.2.5</version>
         </dependency>
 
+        <!-- Реализация логирования для log4j-api 2.21.1, используемого Apache POI. -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.21.1</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- ============================================================ -->
         <!-- jBCrypt — хэширование паролей (REQ-022)                      -->
         <!-- ============================================================ -->
