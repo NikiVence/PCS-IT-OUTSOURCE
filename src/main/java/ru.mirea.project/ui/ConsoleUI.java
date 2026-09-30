@@ -153,12 +153,11 @@ public class ConsoleUI {
     private void createUser() throws BusinessException {
         System.out.println("\n--- Создание пользователя ---");
         String username = readRequiredText("Введите username: ");
-        String password = readRequiredText("Введите пароль: ");
         String fullName = readRequiredText("Введите ФИО: ");
         String email = readRequiredText("Введите email: ");
         UserRole role = readUserRole(false, null);
 
-        User user = userService.createUser(username, password, fullName, email, role);
+        User user = userService.createUser(username, fullName, email, role);
         System.out.println("Пользователь успешно создан. ID: " + user.getId());
     }
 
@@ -199,9 +198,9 @@ public class ConsoleUI {
         User current = userService.getUserById(id);
         System.out.println("Оставьте поле пустым, чтобы не менять его.");
 
-        String username = readOptionalText("Username [" + current.getUsername() + "]: ");
-        String fullName = readOptionalText("ФИО [" + current.getFullName() + "]: ");
-        String email = readOptionalText("Email [" + current.getEmail() + "]: ");
+        String username = readLine("Username [" + current.getUsername() + "]: ");
+        String fullName = readLine("ФИО [" + current.getFullName() + "]: ");
+        String email = readLine("Email [" + current.getEmail() + "]: ");
         UserRole role = readUserRole(true, current.getRole());
 
         userService.updateUser(id,
@@ -283,7 +282,7 @@ public class ConsoleUI {
     }
 
     private void showDatabaseTables() {
-        System.out.println("\n--- Таблица users (без хэшей паролей) ---");
+        System.out.println("\n--- Таблица users ---");
         List<User> users = userService.getAllUsers();
         if (users.isEmpty()) {
             System.out.println("Пользователи не найдены.");
@@ -334,13 +333,7 @@ public class ConsoleUI {
         RequestCategory category = readCategory();
         RequestPriority priority = readPriority();
 
-        ServiceRequest changes = new ServiceRequest();
-        changes.setId(id);
-        changes.setTitle(title);
-        changes.setDescription(description);
-        changes.setCategory(category);
-        changes.setPriority(priority);
-        requestService.updateRequest(changes, actingUserId);
+        requestService.updateRequest(id, actingUserId, title, description, category, priority);
         System.out.println("Заявка обновлена.");
     }
 
@@ -453,13 +446,7 @@ public class ConsoleUI {
     }
 
     private void printNotFoundError(EntityNotFoundException e) {
-        if ("User".equals(e.getEntityName())) {
-            System.out.println("Ошибка: пользователь с ID=" + e.getEntityId() + " не найден.");
-        } else if ("ServiceRequest".equals(e.getEntityName())) {
-            System.out.println("Ошибка: заявка с ID=" + e.getEntityId() + " не найдена.");
-        } else {
-            System.out.println("Ошибка: " + e.getMessage());
-        }
+        System.out.println("Ошибка: " + e.getMessage());
     }
 
     private void printDatabaseError(DatabaseException e) {
@@ -487,10 +474,6 @@ public class ConsoleUI {
             }
             System.out.println("Поле не должно быть пустым.");
         }
-    }
-
-    private String readOptionalText(String prompt) {
-        return readLine(prompt);
     }
 
     private int readPositiveInt(String prompt) {

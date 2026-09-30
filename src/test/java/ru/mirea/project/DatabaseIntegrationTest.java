@@ -35,14 +35,15 @@ class DatabaseIntegrationTest {
         assertEquals(3, requests.sortByCreatedAtNewest().get(0).getId());
         assertEquals(4.5, requests.getStatistics().get("Средняя оценка"));
 
-        User client = users.createUser("integration_client", "test-password", "Тестовый клиент",
+        User client = users.createUser("integration_client", "Тестовый клиент",
                 "integration@example.com", UserRole.CLIENT);
         ServiceRequest request = null;
         try {
             request = requests.createRequest("Тест JDBC", "Проверка CRUD", RequestCategory.SOFTWARE,
                     RequestPriority.LOW, client.getId());
             request.setTitle("Изменённая заявка");
-            requests.updateRequest(request, client.getId());
+            requests.updateRequest(request.getId(), client.getId(), request.getTitle(),
+                    request.getDescription(), request.getCategory(), request.getPriority());
             assertEquals("Изменённая заявка", requests.getRequestById(request.getId()).getTitle());
             requests.assignExecutor(request.getId(), 4);
             requests.changeStatus(request.getId(), RequestStatus.IN_PROGRESS);

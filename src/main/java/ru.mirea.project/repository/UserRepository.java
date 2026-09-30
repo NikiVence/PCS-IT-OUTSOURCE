@@ -19,25 +19,20 @@ public class UserRepository implements CrudRepository<User> {
     private final DatabaseManager databaseManager;
 
     public UserRepository() {
-        this(DatabaseManager.getInstance());
-    }
-
-    UserRepository(DatabaseManager databaseManager) {
-        this.databaseManager = databaseManager;
+        this.databaseManager = DatabaseManager.getInstance();
     }
 
     @Override
     public User create(User user) {
-        String sql = "INSERT INTO users (username, password_hash, full_name, email, role) " +
-                "VALUES (?, ?, ?, ?, ?::user_role) RETURNING *";
+        String sql = "INSERT INTO users (username, full_name, email, role) " +
+                "VALUES (?, ?, ?, ?::user_role) RETURNING *";
 
         try (Connection connection = databaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
-            statement.setString(2, user.getPasswordHash());
-            statement.setString(3, user.getFullName());
-            statement.setString(4, user.getEmail());
-            statement.setString(5, user.getRole().name());
+            statement.setString(2, user.getFullName());
+            statement.setString(3, user.getEmail());
+            statement.setString(4, user.getRole().name());
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 resultSet.next();
@@ -98,17 +93,16 @@ public class UserRepository implements CrudRepository<User> {
 
     @Override
     public boolean update(User user) {
-        String sql = "UPDATE users SET username = ?, password_hash = ?, full_name = ?, " +
+        String sql = "UPDATE users SET username = ?, full_name = ?, " +
                 "email = ?, role = ?::user_role WHERE id = ?";
 
         try (Connection connection = databaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
-            statement.setString(2, user.getPasswordHash());
-            statement.setString(3, user.getFullName());
-            statement.setString(4, user.getEmail());
-            statement.setString(5, user.getRole().name());
-            statement.setObject(6, user.getId());
+            statement.setString(2, user.getFullName());
+            statement.setString(3, user.getEmail());
+            statement.setString(4, user.getRole().name());
+            statement.setObject(5, user.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DatabaseException("Не удалось обновить пользователя", e);
@@ -133,7 +127,6 @@ public class UserRepository implements CrudRepository<User> {
         return new User(
                 resultSet.getInt("id"),
                 resultSet.getString("username"),
-                resultSet.getString("password_hash"),
                 resultSet.getString("full_name"),
                 resultSet.getString("email"),
                 UserRole.valueOf(resultSet.getString("role")),

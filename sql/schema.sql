@@ -22,7 +22,6 @@ CREATE TYPE request_priority AS ENUM ('LOW', 'MEDIUM', 'HIGH');
 CREATE TABLE users (
                        id            SERIAL PRIMARY KEY,
                        username      VARCHAR(50)  NOT NULL UNIQUE,
-                       password_hash VARCHAR(255) NOT NULL,
                        full_name     VARCHAR(100) NOT NULL,
                        email         VARCHAR(100) NOT NULL UNIQUE,
                        role          user_role    NOT NULL,
@@ -72,6 +71,5 @@ CREATE INDEX idx_requests_priority   ON requests(priority);
 CREATE INDEX idx_requests_client     ON requests(client_id);
 CREATE INDEX idx_requests_executor   ON requests(executor_id);
 CREATE INDEX idx_requests_created_at ON requests(created_at);
-
 
 

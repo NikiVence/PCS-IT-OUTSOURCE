@@ -9,39 +9,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-/**
- * Управляет подключением к PostgreSQL.
- *
- * Singleton: единственный экземпляр на всё приложение.
- * При первом вызове {@link #getInstance()} читает db.properties,
- * загружает JDBC-драйвер и держит наготове параметры подключения.
- *
- * Пример использования в Repository:
- * <pre>
- *     try (Connection conn = DatabaseManager.getInstance().getConnection();
- *          PreparedStatement stmt = conn.prepareStatement(sql)) {
- *         ...
- *     }
- * </pre>
- */
 public class DatabaseManager {
 
-    // ============================================================
-    // Singleton
-    // ============================================================
     private static DatabaseManager instance;
 
-    // ============================================================
-    // Параметры подключения (читаются из db.properties)
-    // ============================================================
     private final String url;
     private final String username;
     private final String password;
 
-    /**
-     * Приватный конструктор — никто снаружи не может сделать new DatabaseManager().
-     * Читает db.properties из classpath.
-     */
     private DatabaseManager() {
         Properties props = new Properties();
         try (InputStream input = getClass()
@@ -70,20 +45,8 @@ public class DatabaseManager {
             );
         }
 
-        // Явно загружаем JDBC-драйвер PostgreSQL (не обязательно с JDBC 4+, но наглядно)
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new DatabaseException(
-                    "PostgreSQL JDBC драйвер не найден. Проверь зависимость в pom.xml.", e
-            );
-        }
     }
 
-    /**
-     * Возвращает единственный экземпляр менеджера.
-     * При первом вызове создаёт его (lazy initialization).
-     */
     public static synchronized DatabaseManager getInstance() {
         if (instance == null) {
             instance = new DatabaseManager();
@@ -91,17 +54,6 @@ public class DatabaseManager {
         return instance;
     }
 
-    // ============================================================
-    // Получение соединения
-    // ============================================================
-
-    /**
-     * Открывает новое соединение с PostgreSQL.
-     * Вызывающий код ОБЯЗАН закрыть его через try-with-resources.
-     *
-     * @return Connection
-     * @throws DatabaseException если подключиться не удалось
-     */
     public Connection getConnection() {
         try {
             return DriverManager.getConnection(url, username, password);
@@ -112,14 +64,4 @@ public class DatabaseManager {
         }
     }
 
-    // ============================================================
-    // Геттеры (для отладки и логов)
-    // ============================================================
-    public String getUrl() {
-        return url;
-    }
-
-    public String getUsername() {
-        return username;
-    }
 }

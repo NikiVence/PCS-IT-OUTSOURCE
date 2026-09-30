@@ -8,26 +8,25 @@ import ru.mirea.project.model.RequestStatus;
 import ru.mirea.project.model.ServiceRequest;
 import ru.mirea.project.model.User;
 import ru.mirea.project.model.UserRole;
+import ru.mirea.project.repository.JdbcServiceRequestRepository;
 import ru.mirea.project.repository.ServiceRequestRepository;
 import ru.mirea.project.repository.UserRepository;
 import ru.mirea.project.repository.CrudRepository;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 
 public class ServiceRequestService {
 
-    private final CrudRepository<ServiceRequest> requestRepository;
+    private final ServiceRequestRepository requestRepository;
     private final CrudRepository<User> userRepository;
 
     public ServiceRequestService() {
-        this(new ServiceRequestRepository(), new UserRepository());
+        this(new JdbcServiceRequestRepository(), new UserRepository());
     }
 
-    public ServiceRequestService(CrudRepository<ServiceRequest> requestRepository,
+    public ServiceRequestService(ServiceRequestRepository requestRepository,
                                  CrudRepository<User> userRepository) {
         this.requestRepository = requestRepository;
         this.userRepository = userRepository;
@@ -37,11 +36,7 @@ public class ServiceRequestService {
                                         RequestCategory category, RequestPriority priority,
                                         Integer clientId)
             throws BusinessException, EntityNotFoundException {
-        requireText(title, "Заголовок");
-        if (title.trim().length() < 3) {
-            throw new BusinessException("Заголовок должен содержать не менее 3 символов");
-        }
-        requireText(description, "Описание");
+        validateRequestText(title, description);
         if (category == null) {
             throw new BusinessException("Категория заявки обязательна");
         }
@@ -61,7 +56,8 @@ public class ServiceRequestService {
 
     public ServiceRequest getRequestById(Integer id) throws EntityNotFoundException {
         return requestRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ServiceRequest", id));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Заявка с ID=" + id + " не найдена"));
     }
 
     public List<ServiceRequest> getAllRequests() {
@@ -70,94 +66,39 @@ public class ServiceRequestService {
 
     public List<ServiceRequest> searchByTitle(String query) throws BusinessException {
         requireText(query, "Строка поиска");
-        String queryLowerCase = query.trim().toLowerCase(Locale.ROOT);
-
-        return requestRepository.findAll().stream()
-                .filter(request -> request.getTitle() != null
-                        && request.getTitle().toLowerCase(Locale.ROOT).contains(queryLowerCase))
-                .toList();
+        return requestRepository.searchByTitle(query.trim());
     }
 
     public List<ServiceRequest> searchByDescription(String query) throws BusinessException {
         requireText(query, "Строка поиска");
-        String queryLowerCase = query.trim().toLowerCase(Locale.ROOT);
-
-        return requestRepository.findAll().stream()
-                .filter(request -> request.getDescription() != null
-                        && request.getDescription().toLowerCase(Locale.ROOT).contains(queryLowerCase))
-                .toList();
+        return requestRepository.searchByDescription(query.trim());
     }
 
     public List<ServiceRequest> filterByStatus(RequestStatus status) {
-        return requestRepository.findAll().stream()
-                .filter(request -> request.getStatus() == status)
-                .toList();
+        return requestRepository.findByStatus(status);
     }
 
     public List<ServiceRequest> filterByPriority(RequestPriority priority) {
-        return requestRepository.findAll().stream()
-                .filter(request -> request.getPriority() == priority)
-                .toList();
+        return requestRepository.findByPriority(priority);
     }
 
     public List<ServiceRequest> sortByCreatedAtNewest() {
-        return requestRepository.findAll().stream()
-                .sorted(Comparator.comparing(
-                        ServiceRequest::getCreatedAt,
-                        Comparator.nullsLast(Comparator.reverseOrder())))
-                .toList();
+        return requestRepository.findAllNewestFirst();
     }
 
     public List<ServiceRequest> sortByPriorityDescending() {
-        return requestRepository.findAll().stream()
-                .sorted(Comparator.comparing(
-                        ServiceRequest::getPriority,
-                        Comparator.nullsLast(Comparator.reverseOrder())))
-                .toList();
+        return requestRepository.findAllByPriorityDescending();
     }
 
     public LinkedHashMap<String, Number> getStatistics() {
-        List<User> users = userRepository.findAll();
-        List<ServiceRequest> requests = requestRepository.findAll();
-
-        long newRequests = requests.stream()
-                .filter(request -> request.getStatus() == RequestStatus.NEW)
-                .count();
-        long activeRequests = requests.stream()
-                .filter(request -> request.getStatus() == RequestStatus.IN_PROGRESS
-                        || request.getStatus() == RequestStatus.WAITING)
-                .count();
-        long closedRequests = requests.stream()
-                .filter(request -> request.getStatus() == RequestStatus.CLOSED)
-                .count();
-        long highPriorityRequests = requests.stream()
-                .filter(request -> request.getPriority() == RequestPriority.HIGH)
-                .count();
-        double averageRating = requests.stream()
-                .filter(request -> request.getStatus() == RequestStatus.CLOSED)
-                .filter(request -> request.getRating() != null && request.getRating() != 0)
-                .mapToInt(ServiceRequest::getRating)
-                .average()
-                .orElse(0.0);
-
-        LinkedHashMap<String, Number> statistics = new LinkedHashMap<>();
-        statistics.put("Всего пользователей", (long) users.size());
-        statistics.put("Всего заявок", (long) requests.size());
-        statistics.put("Новых заявок", newRequests);
-        statistics.put("Активных заявок", activeRequests);
-        statistics.put("Закрытых заявок", closedRequests);
-        statistics.put("Заявок высокого приоритета", highPriorityRequests);
-        statistics.put("Средняя оценка", averageRating);
-        return statistics;
+        return requestRepository.getStatistics();
     }
 
-    public ServiceRequest updateRequest(ServiceRequest changes, Integer actingUserId)
+    public ServiceRequest updateRequest(Integer requestId, Integer actingUserId,
+                                        String title, String description,
+                                        RequestCategory category, RequestPriority priority)
             throws EntityNotFoundException, BusinessException {
-        if (changes == null || changes.getId() == null) {
-            throw new BusinessException("Для изменения заявки необходим её ID");
-        }
-
-        ServiceRequest existing = getRequestById(changes.getId());
+        ServiceRequest existing = getRequestById(requestId);
         User actingUser = getUserById(actingUserId);
 
         if (actingUser.getRole() == UserRole.CLIENT) {
@@ -169,26 +110,25 @@ public class ServiceRequestService {
             }
         }
 
-        validateRequestText(changes.getTitle(), changes.getDescription());
-        if (changes.getCategory() == null || changes.getPriority() == null) {
+        validateRequestText(title, description);
+        if (category == null || priority == null) {
             throw new BusinessException("Категория и приоритет заявки обязательны");
         }
 
-        existing.setTitle(changes.getTitle().trim());
-        existing.setDescription(changes.getDescription().trim());
-        existing.setCategory(changes.getCategory());
-        existing.setPriority(changes.getPriority());
+        existing.setTitle(title.trim());
+        existing.setDescription(description.trim());
+        existing.setCategory(category);
+        existing.setPriority(priority);
 
         if (!requestRepository.update(existing)) {
-            throw new EntityNotFoundException("ServiceRequest", changes.getId());
+            throw new EntityNotFoundException("Заявка с ID=" + requestId + " не найдена");
         }
         return existing;
     }
 
     public void deleteRequest(Integer id) throws EntityNotFoundException {
-        getRequestById(id);
         if (!requestRepository.deleteById(id)) {
-            throw new EntityNotFoundException("ServiceRequest", id);
+            throw new EntityNotFoundException("Заявка с ID=" + id + " не найдена");
         }
     }
 
@@ -202,7 +142,7 @@ public class ServiceRequestService {
 
         request.setExecutorId(executorId);
         if (!requestRepository.update(request)) {
-            throw new EntityNotFoundException("ServiceRequest", requestId);
+            throw new EntityNotFoundException("Заявка с ID=" + requestId + " не найдена");
         }
         return request;
     }
@@ -223,7 +163,7 @@ public class ServiceRequestService {
         request.setStatus(newStatus);
 
         if (!requestRepository.update(request)) {
-            throw new EntityNotFoundException("ServiceRequest", requestId);
+            throw new EntityNotFoundException("Заявка с ID=" + requestId + " не найдена");
         }
         return request;
     }
@@ -240,14 +180,15 @@ public class ServiceRequestService {
 
         request.setRating(rating);
         if (!requestRepository.update(request)) {
-            throw new EntityNotFoundException("ServiceRequest", requestId);
+            throw new EntityNotFoundException("Заявка с ID=" + requestId + " не найдена");
         }
         return request;
     }
 
     private User getUserById(Integer id) throws EntityNotFoundException {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User", id));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Пользователь с ID=" + id + " не найден"));
     }
 
     private void validateRequestText(String title, String description) throws BusinessException {

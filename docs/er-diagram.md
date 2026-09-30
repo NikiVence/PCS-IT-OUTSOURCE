@@ -10,7 +10,6 @@ erDiagram
     users {
         SERIAL id PK
         VARCHAR(50) username UK "NOT NULL, минимум 3 символа"
-        VARCHAR(255) password_hash "NOT NULL"
         VARCHAR(100) full_name "NOT NULL"
         VARCHAR(100) email UK "NOT NULL"
         user_role role "NOT NULL"

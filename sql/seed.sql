@@ -7,15 +7,14 @@
 
 -- ============================================================
 -- Пользователи (6 штук: 1 админ, 3 клиента, 2 исполнителя)
--- Пароль у всех: "password123" (BCrypt-хэш)
 -- ============================================================
-INSERT INTO users (username, password_hash, full_name, email, role) VALUES
-                                                                        ('admin',    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Иванов Иван Иванович',     'admin@it-outsource.ru',     'ADMIN'),
-                                                                        ('client1',  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Петров Пётр Петрович',     'petrov@mail.ru',            'CLIENT'),
-                                                                        ('client2',  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Сидорова Анна Сергеевна',  'sidorova@mail.ru',          'CLIENT'),
-                                                                        ('exec1',    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Кузнецов Дмитрий Олегович','kuznetsov@it-outsource.ru', 'EXECUTOR'),
-                                                                        ('exec2',    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Смирнов Алексей Игоревич', 'smirnov@it-outsource.ru',   'EXECUTOR'),
-                                                                        ('client3',  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Морозова Елена Викторовна','morozova@mail.ru',          'CLIENT');
+INSERT INTO users (username, full_name, email, role) VALUES
+    ('admin',   'Иванов Иван Иванович',      'admin@it-outsource.ru',     'ADMIN'),
+    ('client1', 'Петров Пётр Петрович',      'petrov@mail.ru',            'CLIENT'),
+    ('client2', 'Сидорова Анна Сергеевна',   'sidorova@mail.ru',          'CLIENT'),
+    ('exec1',   'Кузнецов Дмитрий Олегович', 'kuznetsov@it-outsource.ru', 'EXECUTOR'),
+    ('exec2',   'Смирнов Алексей Игоревич',  'smirnov@it-outsource.ru',   'EXECUTOR'),
+    ('client3', 'Морозова Елена Викторовна', 'morozova@mail.ru',          'CLIENT');
 
 -- ============================================================
 -- Заявки (12 штук) — разные статусы, категории, приоритеты

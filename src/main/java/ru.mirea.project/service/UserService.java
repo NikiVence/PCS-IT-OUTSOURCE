@@ -1,6 +1,5 @@
 package ru.mirea.project.service;
 
-import org.mindrot.jbcrypt.BCrypt;
 import ru.mirea.project.exception.BusinessException;
 import ru.mirea.project.exception.EntityNotFoundException;
 import ru.mirea.project.model.User;
@@ -22,24 +21,23 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(String username, String password, String fullName,
+    public User createUser(String username, String fullName,
                            String email, UserRole role) throws BusinessException {
         requireText(username, "Имя пользователя");
-        requireText(password, "Пароль");
         requireText(fullName, "ФИО");
         requireText(email, "Email");
         if (role == null) {
             throw new BusinessException("Роль пользователя обязательна");
         }
 
-        String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
-        User user = new User(username.trim(), passwordHash, fullName.trim(), email.trim(), role);
+        User user = new User(username.trim(), fullName.trim(), email.trim(), role);
         return userRepository.create(user);
     }
 
     public User getUserById(Integer id) throws EntityNotFoundException {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User", id));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Пользователь с ID=" + id + " не найден"));
     }
 
     public Optional<User> findByUsername(String username) {
@@ -67,15 +65,14 @@ public class UserService {
         user.setRole(role);
 
         if (!userRepository.update(user)) {
-            throw new EntityNotFoundException("User", id);
+            throw new EntityNotFoundException("Пользователь с ID=" + id + " не найден");
         }
         return user;
     }
 
     public void deleteUser(Integer id) throws EntityNotFoundException {
-        getUserById(id);
         if (!userRepository.deleteById(id)) {
-            throw new EntityNotFoundException("User", id);
+            throw new EntityNotFoundException("Пользователь с ID=" + id + " не найден");
         }
     }
 

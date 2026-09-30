@@ -23,9 +23,9 @@ class ExcelExportServiceTest {
     private final ExcelExportService exporter = new ExcelExportService();
 
     @Test
-    void exportsReadableWorkbookWithTypedCellsAndNoPasswordHashes() throws Exception {
+    void exportsReadableWorkbookWithTypedCells() throws Exception {
         LocalDateTime created = LocalDateTime.of(2026, 9, 15, 9, 30);
-        User user = new User(2, "client1", "secret-hash", "Иван Иванов",
+        User user = new User(2, "client1", "Иван Иванов",
                 "client@example.com", UserRole.CLIENT, created);
         ServiceRequest request = new ServiceRequest(1, "=1+1", "Диагностика\nноутбука",
                 RequestCategory.HARDWARE, RequestStatus.NEW, RequestPriority.HIGH,
@@ -41,11 +41,6 @@ class ExcelExportServiceTest {
             Sheet users = workbook.getSheet("Пользователи");
             assertEquals(6, users.getRow(1).getLastCellNum());
             assertEquals("Иван Иванов", users.getRow(1).getCell(2).getStringCellValue());
-            for (var row : users) {
-                for (var cell : row) {
-                    assertNotEquals("secret-hash", cell.toString());
-                }
-            }
             var row = workbook.getSheet("Заявки").getRow(1);
             assertEquals(CellType.NUMERIC, row.getCell(0).getCellType());
             assertEquals(CellType.STRING, row.getCell(1).getCellType());

@@ -1,23 +1,9 @@
 package ru.mirea.project.model;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-/**
- * Заявка на IT-обслуживание — основная сущность системы.
- * Соответствует строке таблицы {@code requests} в PostgreSQL.
- *
- * Связана с двумя пользователями:
- * <ul>
- *     <li>{@link #clientId}   — кто создал заявку (обязательно)</li>
- *     <li>{@link #executorId} — кто взял в работу (может быть null, если ещё не назначен)</li>
- * </ul>
- */
 public class ServiceRequest {
 
-    // ============================================================
-    // Поля — соответствуют колонкам таблицы requests в БД
-    // ============================================================
     private Integer id;
     private String title;
     private String description;
@@ -25,25 +11,14 @@ public class ServiceRequest {
     private RequestStatus status;
     private RequestPriority priority;
 
-    private Integer clientId;               // FK → users.id, NOT NULL
-    private Integer executorId;             // FK → users.id, NULL пока не назначен
+    private Integer clientId;
+    private Integer executorId;
 
     private LocalDateTime createdAt;
-    private LocalDateTime takenAt;          // когда исполнитель взял в работу
-    private LocalDateTime closedAt;         // когда заявка закрыта
-    private Integer rating;                 // 1..5, только для CLOSED
+    private LocalDateTime takenAt;
+    private LocalDateTime closedAt;
+    private Integer rating;
 
-    // ============================================================
-    // Конструкторы
-    // ============================================================
-
-    public ServiceRequest() {
-    }
-
-    /**
-     * Конструктор для создания новой заявки клиентом.
-     * status по умолчанию = NEW, executorId = null.
-     */
     public ServiceRequest(String title, String description,
                           RequestCategory category, RequestPriority priority,
                           Integer clientId) {
@@ -55,9 +30,6 @@ public class ServiceRequest {
         this.status = RequestStatus.NEW;
     }
 
-    /**
-     * Полный конструктор — для чтения из БД.
-     */
     public ServiceRequest(Integer id, String title, String description,
                           RequestCategory category, RequestStatus status,
                           RequestPriority priority, Integer clientId, Integer executorId,
@@ -76,10 +48,6 @@ public class ServiceRequest {
         this.closedAt = closedAt;
         this.rating = rating;
     }
-
-    // ============================================================
-    // Геттеры и сеттеры
-    // ============================================================
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -100,13 +68,11 @@ public class ServiceRequest {
     public void setPriority(RequestPriority priority) { this.priority = priority; }
 
     public Integer getClientId() { return clientId; }
-    public void setClientId(Integer clientId) { this.clientId = clientId; }
 
     public Integer getExecutorId() { return executorId; }
     public void setExecutorId(Integer executorId) { this.executorId = executorId; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public LocalDateTime getTakenAt() { return takenAt; }
     public void setTakenAt(LocalDateTime takenAt) { this.takenAt = takenAt; }
@@ -116,23 +82,6 @@ public class ServiceRequest {
 
     public Integer getRating() { return rating; }
     public void setRating(Integer rating) { this.rating = rating; }
-
-    // ============================================================
-    // equals, hashCode, toString
-    // ============================================================
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ServiceRequest that = (ServiceRequest) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 
     @Override
     public String toString() {
