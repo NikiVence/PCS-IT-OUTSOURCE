@@ -41,7 +41,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.2</version>
+            <version>42.7.14</version>
         </dependency>
 
         <!-- ============================================================ -->
@@ -50,14 +50,19 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.2.5</version>
+            <version>5.5.1</version>
         </dependency>
 
-        <!-- Реализация логирования для log4j-api 2.21.1, используемого Apache POI. -->
+        <!-- API и реализация логирования для Apache POI. -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.26.1</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.21.1</version>
+            <version>2.26.1</version>
             <scope>runtime</scope>
         </dependency>
 

@@ -26,7 +26,7 @@
 - PostgreSQL (проверено на версии 17).
 - Доступ к Maven Central при первой сборке для загрузки зависимостей.
 
-Зависимости: PostgreSQL JDBC 42.7.2, Apache POI 5.2.5; тесты — JUnit 5.
+Зависимости: PostgreSQL JDBC 42.7.14, Apache POI 5.5.1; тесты — JUnit 5.
 
 ## Подготовка базы данных
 
