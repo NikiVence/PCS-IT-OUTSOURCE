@@ -1,0 +1,51 @@
+.main-window {
+    -fx-background-color: #f4f7fb;
+}
+
+.header {
+    -fx-padding: 18px 24px;
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #dce4ed transparent;
+}
+
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f3a5f;
+}
+
+.navigation {
+    -fx-pref-width: 190px;
+    -fx-background-color: #eaf0f7;
+}
+
+.navigation-button {
+    -fx-max-width: infinity;
+    -fx-padding: 10px 12px;
+    -fx-background-color: transparent;
+    -fx-text-fill: #294563;
+    -fx-font-size: 14px;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+}
+
+.navigation-button:hover,
+.navigation-button.selected {
+    -fx-background-color: #d5e3f2;
+}
+
+.content-area {
+    -fx-alignment: top-left;
+    -fx-background-color: #f4f7fb;
+}
+
+.section-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f3a5f;
+}
+
+.body-text {
+    -fx-font-size: 16px;
+    -fx-text-fill: #526579;
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.mirea.project.ui.MainController"
+            styleClass="main-window">
+    <top>
+        <HBox alignment="CENTER_LEFT" styleClass="header">
+            <Label text="IT-OUTSOURCE" styleClass="title"/>
+        </HBox>
+    </top>
+    <left>
+        <VBox spacing="10.0" styleClass="navigation">
+            <padding>
+                <Insets top="20.0" right="14.0" bottom="20.0" left="14.0"/>
+            </padding>
+            <Button fx:id="requestsButton" text="Заявки"
+                    onAction="#showRequests" styleClass="navigation-button"/>
+            <Button fx:id="usersButton" text="Пользователи"
+                    onAction="#showUsers" styleClass="navigation-button"/>
+            <Button fx:id="statisticsButton" text="Статистика"
+                    onAction="#showStatistics" styleClass="navigation-button"/>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentArea" styleClass="content-area">
+            <padding>
+                <Insets top="28.0" right="28.0" bottom="28.0" left="28.0"/>
+            </padding>
+        </StackPane>
+    </center>
+</BorderPane>
