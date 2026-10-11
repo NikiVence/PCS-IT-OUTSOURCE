@@ -31,7 +31,6 @@ public class UserFormController {
     @FXML
     public void initialize() {
         roleComboBox.getItems().setAll(UserRole.values());
-        roleComboBox.setConverter(UiFormat.roleConverter());
     }
 
     /** Предзаполняет форму данными выбранного пользователя (режим редактирования). */

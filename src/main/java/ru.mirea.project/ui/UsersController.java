@@ -22,6 +22,8 @@ import ru.mirea.project.model.User;
 import ru.mirea.project.service.UserService;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Экран «Пользователи»: таблица и CRUD через диалоговую форму.
@@ -31,6 +33,8 @@ public class UsersController {
 
     private static final String FORM_FXML = "/ru/mirea/project/view/user-form.fxml";
     private static final String STYLESHEET = "/ru/mirea/project/view/main.css";
+    private static final DateTimeFormatter DATE_FORMAT =
+            DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     private final UserService userService = new UserService();
     private final ObservableList<User> users = FXCollections.observableArrayList();
@@ -71,9 +75,9 @@ public class UsersController {
         usernameColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getUsername()));
         fullNameColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getFullName()));
         emailColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getEmail()));
-        roleColumn.setCellValueFactory(c -> new SimpleStringProperty(UiFormat.role(c.getValue().getRole())));
+        roleColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getRole().toString()));
         createdAtColumn.setCellValueFactory(
-                c -> new SimpleStringProperty(UiFormat.dateTime(c.getValue().getCreatedAt())));
+                c -> new SimpleStringProperty(formatDate(c.getValue().getCreatedAt())));
 
         usersTable.setItems(users);
         // Колонки растягиваются по ширине таблицы — без горизонтальной прокрутки.
@@ -217,5 +221,9 @@ public class UsersController {
             userService.updateUser(existing.getId(), form.getUsername(), form.getFullName(),
                     form.getEmail(), form.getRole());
         }
+    }
+
+    private String formatDate(LocalDateTime date) {
+        return date == null ? "—" : DATE_FORMAT.format(date);
     }
 }

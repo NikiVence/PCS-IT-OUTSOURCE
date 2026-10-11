@@ -50,74 +50,115 @@
     -fx-text-fill: #526579;
 }
 
-/* ---------- Общие элементы экранов ---------- */
-.screen {
-    -fx-max-width: infinity;
-    -fx-max-height: infinity;
+.requests-view {
+    -fx-fill-width: true;
 }
 
-.toolbar .button {
-    -fx-padding: 7px 14px;
+.request-header {
+    -fx-padding: 0 0 4px 0;
+}
+
+.selection-panel {
+    -fx-padding: 12px 14px;
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-border-color: #dce4ed;
+    -fx-border-radius: 6px;
+}
+
+.selection-label {
     -fx-font-size: 13px;
+    -fx-text-fill: #526579;
+}
+
+.selection-actions {
+    -fx-alignment: center-left;
+}
+
+.requests-table,
+.users-table {
+    -fx-background-color: white;
+    -fx-border-color: #dce4ed;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.requests-table .column-header-background,
+.users-table .column-header-background {
+    -fx-background-color: #eaf0f7;
+}
+
+.requests-table .column-header,
+.requests-table .filler,
+.users-table .column-header,
+.users-table .filler {
+    -fx-background-color: transparent;
+}
+
+.requests-table .column-header .label,
+.users-table .column-header .label {
+    -fx-alignment: center-left;
+    -fx-text-fill: #294563;
+    -fx-font-weight: bold;
+}
+
+.requests-table .table-row-cell:selected,
+.users-table .table-row-cell:selected {
+    -fx-background-color: #d5e3f2;
+}
+
+.requests-table .table-row-cell:selected .text,
+.users-table .table-row-cell:selected .text {
+    -fx-fill: #1f3a5f;
+}
+
+.primary-button,
+.secondary-button,
+.danger-button {
+    -fx-padding: 8px 12px;
+    -fx-background-radius: 4px;
     -fx-cursor: hand;
 }
 
 .primary-button {
-    -fx-background-color: #2f6fb3;
+    -fx-background-color: #2d6da3;
     -fx-text-fill: white;
-    -fx-background-radius: 4px;
 }
 
-.primary-button:hover {
-    -fx-background-color: #255d97;
+.secondary-button {
+    -fx-background-color: #dce7f2;
+    -fx-text-fill: #294563;
 }
 
 .danger-button {
-    -fx-background-color: #fbe9e9;
-    -fx-text-fill: #b42318;
-    -fx-border-color: #f1b8b3;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
+    -fx-background-color: #b94a48;
+    -fx-text-fill: white;
 }
 
-.danger-button:hover {
-    -fx-background-color: #f6d4d2;
+.primary-button:disabled,
+.secondary-button:disabled,
+.danger-button:disabled {
+    -fx-opacity: 0.45;
+    -fx-cursor: default;
 }
 
+.dialog-form {
+    -fx-background-color: white;
+}
+
+.field-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #294563;
+}
+
+/* ---------- Экран пользователей: подсказки, форма и ошибки ---------- */
 .hint-text {
     -fx-text-fill: #6b7c8f;
     -fx-font-size: 13px;
 }
 
-/* ---------- Таблицы ---------- */
-.table-view {
-    -fx-background-color: white;
-    -fx-border-color: #dce4ed;
-    -fx-font-size: 13px;
-}
-
-.table-view .column-header {
-    -fx-background-color: #eaf0f7;
-    -fx-font-weight: bold;
-}
-
-.table-row-cell:selected {
-    -fx-background-color: #cfe0f3;
-    -fx-table-cell-border-color: #cfe0f3;
-}
-
-.table-row-cell:selected .text {
-    -fx-fill: #1f3a5f;
-}
-
-/* ---------- Формы и ошибки ---------- */
 .form-dialog .label {
     -fx-text-fill: #294563;
-}
-
-.form-dialog .text-field,
-.form-dialog .combo-box {
-    -fx-pref-height: 30px;
 }
 
 .error-text {
