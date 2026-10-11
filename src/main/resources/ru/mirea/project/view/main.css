@@ -168,3 +168,17 @@
     -fx-background-radius: 4px;
     -fx-max-width: infinity;
 }
+
+/* ---------- Панель поиска, фильтров и сортировки ---------- */
+.filter-panel {
+    -fx-padding: 12px 14px;
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-border-color: #dce4ed;
+    -fx-border-radius: 6px;
+}
+
+.filter-label {
+    -fx-text-fill: #526579;
+    -fx-font-size: 13px;
+}

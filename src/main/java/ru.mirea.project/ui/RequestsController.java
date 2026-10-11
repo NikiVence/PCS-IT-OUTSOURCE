@@ -1,5 +1,10 @@
 package ru.mirea.project.ui;
 
+import javafx.beans.binding.Bindings;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,6 +27,8 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import ru.mirea.project.exception.BusinessException;
 import ru.mirea.project.exception.DatabaseException;
 import ru.mirea.project.exception.EntityNotFoundException;
+import ru.mirea.project.model.RequestCategory;
+import ru.mirea.project.model.RequestPriority;
 import ru.mirea.project.model.RequestStatus;
 import ru.mirea.project.model.ServiceRequest;
 import ru.mirea.project.model.User;
@@ -33,6 +40,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +108,28 @@ public class RequestsController {
     @FXML
     private Button rateButton;
 
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private ComboBox<RequestStatus> statusFilter;
+
+    @FXML
+    private ComboBox<RequestPriority> priorityFilter;
+
+    @FXML
+    private ComboBox<RequestCategory> categoryFilter;
+
+    @FXML
+    private ComboBox<RequestSort> sortComboBox;
+
+    @FXML
+    private Label resultLabel;
+
     private final ObservableList<ServiceRequest> requests = FXCollections.observableArrayList();
+    // Цепочка: все заявки -> отфильтрованные -> отсортированные -> таблица.
+    private final FilteredList<ServiceRequest> filteredRequests = new FilteredList<>(requests);
+    private final SortedList<ServiceRequest> sortedRequests = new SortedList<>(filteredRequests);
     private final List<User> users = new ArrayList<>();
     private final Map<Integer, User> usersById = new HashMap<>();
 
@@ -134,8 +163,9 @@ public class RequestsController {
         ratingColumn.setCellValueFactory(cell ->
                 new ReadOnlyStringWrapper(formatNumber(cell.getValue().getRating())));
 
-        requestsTable.setItems(requests);
+        requestsTable.setItems(sortedRequests);
         requestsTable.setPlaceholder(new Label("Заявки не найдены"));
+        setupSearchAndFilters();
 
         for (Button button : List.of(
                 editButton, deleteButton, assignButton, statusButton, rateButton)) {
@@ -144,6 +174,85 @@ public class RequestsController {
         }
         requestsTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldRequest, selectedRequest) -> updateSelectionLabel(selectedRequest));
+    }
+
+    private void setupSearchAndFilters() {
+        setupFilter(statusFilter, RequestStatus.values(), "Все статусы");
+        setupFilter(priorityFilter, RequestPriority.values(), "Все приоритеты");
+        setupFilter(categoryFilter, RequestCategory.values(), "Все категории");
+
+        sortComboBox.getItems().setAll(RequestSort.values());
+        sortComboBox.setValue(RequestSort.BY_ID);
+
+        // Любое изменение поиска или фильтра пересчитывает условие отбора.
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+        statusFilter.valueProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+        priorityFilter.valueProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+        categoryFilter.valueProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+
+        // Сортировка: щелчок по заголовку колонки важнее выбора в списке.
+        // При выборе в списке сортировка по колонкам сбрасывается.
+        requestsTable.setSortPolicy(table -> true);
+        sortedRequests.comparatorProperty().bind(Bindings.createObjectBinding(
+                () -> requestsTable.getComparator() != null
+                        ? requestsTable.getComparator()
+                        : sortComboBox.getValue().comparator(),
+                requestsTable.comparatorProperty(), sortComboBox.valueProperty()));
+        sortComboBox.valueProperty().addListener(
+                (observable, oldValue, newValue) -> requestsTable.getSortOrder().clear());
+
+        // Даты и приоритет показаны строками, поэтому сортируются только через список «Сортировка».
+        for (TableColumn<ServiceRequest, ?> column : List.of(
+                priorityColumn, createdAtColumn, takenAtColumn, closedAtColumn, ratingColumn)) {
+            column.setSortable(false);
+        }
+
+        resultLabel.textProperty().bind(Bindings.createStringBinding(
+                () -> "Показано: " + filteredRequests.size() + " из " + requests.size(),
+                filteredRequests, requests));
+    }
+
+    private void applyFilters() {
+        filteredRequests.setPredicate(RequestFilter.of(
+                searchField.getText(),
+                statusFilter.getValue(),
+                priorityFilter.getValue(),
+                categoryFilter.getValue()));
+    }
+
+    @FXML
+    private void resetFilters() {
+        searchField.clear();
+        statusFilter.setValue(null);
+        priorityFilter.setValue(null);
+        categoryFilter.setValue(null);
+        sortComboBox.setValue(RequestSort.BY_ID);
+        requestsTable.getSortOrder().clear();
+    }
+
+    /** Список значений перечисления с пунктом «все» (null) в начале. */
+    private <T> void setupFilter(ComboBox<T> comboBox, T[] values, String allText) {
+        List<T> items = new ArrayList<>();
+        items.add(null);
+        items.addAll(Arrays.asList(values));
+        comboBox.getItems().setAll(items);
+        comboBox.setCellFactory(listView -> new FilterCell<>(allText));
+        comboBox.setButtonCell(new FilterCell<>(allText));
+        comboBox.setValue(null);
+    }
+
+    private static class FilterCell<T> extends ListCell<T> {
+        private final String allText;
+
+        FilterCell(String allText) {
+            this.allText = allText;
+        }
+
+        @Override
+        protected void updateItem(T item, boolean empty) {
+            super.updateItem(item, empty);
+            setText(empty || item == null ? allText : item.toString());
+        }
     }
 
     public void setServices(ServiceRequestService requestService, UserService userService) {

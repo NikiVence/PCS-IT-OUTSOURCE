@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -19,6 +21,23 @@
         <Button text="Обновить" onAction="#refreshData" styleClass="secondary-button"/>
         <Button text="Добавить заявку" onAction="#createRequest" styleClass="primary-button"/>
     </HBox>
+
+    <!-- Поиск, фильтры и сортировка (участник 3) -->
+    <VBox spacing="9.0" styleClass="filter-panel">
+        <HBox spacing="8.0" alignment="CENTER_LEFT">
+            <TextField fx:id="searchField" HBox.hgrow="ALWAYS"
+                       promptText="Поиск по заголовку и описанию"/>
+            <Label text="Сортировка:" styleClass="filter-label"/>
+            <ComboBox fx:id="sortComboBox" prefWidth="250.0"/>
+        </HBox>
+        <FlowPane hgap="8.0" vgap="8.0" alignment="CENTER_LEFT">
+            <ComboBox fx:id="statusFilter" prefWidth="160.0"/>
+            <ComboBox fx:id="priorityFilter" prefWidth="160.0"/>
+            <ComboBox fx:id="categoryFilter" prefWidth="210.0"/>
+            <Button text="Сбросить" onAction="#resetFilters" styleClass="secondary-button"/>
+            <Label fx:id="resultLabel" styleClass="hint-text"/>
+        </FlowPane>
+    </VBox>
 
     <VBox spacing="9.0" styleClass="selection-panel">
         <Label fx:id="selectionLabel"
