@@ -5,30 +5,45 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="ru.mirea.project.ui.RequestsController"
       spacing="14.0" styleClass="requests-view">
-    <Label text="Заявки" styleClass="section-title"/>
-
-    <FlowPane hgap="8.0" vgap="8.0" styleClass="request-actions">
-        <Button text="Добавить" onAction="#createRequest" styleClass="primary-button"/>
-        <Button text="Изменить" onAction="#editRequest" styleClass="secondary-button"/>
-        <Button text="Удалить" onAction="#deleteRequest" styleClass="danger-button"/>
+    <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="request-header">
+        <Label text="Заявки" styleClass="section-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
         <Button text="Обновить" onAction="#refreshData" styleClass="secondary-button"/>
-        <Button text="Назначить исполнителя" onAction="#assignExecutor" styleClass="secondary-button"/>
-        <Button text="Изменить статус" onAction="#changeStatus" styleClass="secondary-button"/>
-        <Button text="Оценить" onAction="#rateRequest" styleClass="secondary-button"/>
-    </FlowPane>
+        <Button text="Добавить заявку" onAction="#createRequest" styleClass="primary-button"/>
+    </HBox>
+
+    <VBox spacing="9.0" styleClass="selection-panel">
+        <Label fx:id="selectionLabel"
+               text="Выберите строку в таблице, чтобы работать с заявкой"
+               styleClass="selection-label"/>
+        <FlowPane hgap="8.0" vgap="8.0" styleClass="selection-actions">
+            <Button fx:id="editButton" text="Изменить" onAction="#editRequest"
+                    styleClass="secondary-button"/>
+            <Button fx:id="assignButton" text="Назначить исполнителя" onAction="#assignExecutor"
+                    styleClass="secondary-button"/>
+            <Button fx:id="statusButton" text="Изменить статус" onAction="#changeStatus"
+                    styleClass="secondary-button"/>
+            <Button fx:id="rateButton" text="Оценить" onAction="#rateRequest"
+                    styleClass="secondary-button"/>
+            <Button fx:id="deleteButton" text="Удалить" onAction="#deleteRequest"
+                    styleClass="danger-button"/>
+        </FlowPane>
+    </VBox>
 
     <TableView fx:id="requestsTable" VBox.vgrow="ALWAYS" styleClass="requests-table">
         <columns>
             <TableColumn fx:id="idColumn" text="ID" prefWidth="55.0"/>
             <TableColumn fx:id="titleColumn" text="Заголовок" prefWidth="180.0"/>
             <TableColumn fx:id="descriptionColumn" text="Описание" prefWidth="260.0"/>
-            <TableColumn fx:id="categoryColumn" text="Категория" prefWidth="120.0"/>
+            <TableColumn fx:id="categoryColumn" text="Категория" prefWidth="190.0"/>
             <TableColumn fx:id="statusColumn" text="Статус" prefWidth="130.0"/>
             <TableColumn fx:id="priorityColumn" text="Приоритет" prefWidth="100.0"/>
             <TableColumn fx:id="clientColumn" text="Клиент" prefWidth="180.0"/>

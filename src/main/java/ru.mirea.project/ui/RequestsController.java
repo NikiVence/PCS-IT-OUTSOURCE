@@ -82,6 +82,24 @@ public class RequestsController {
     @FXML
     private TableColumn<ServiceRequest, String> ratingColumn;
 
+    @FXML
+    private Label selectionLabel;
+
+    @FXML
+    private Button editButton;
+
+    @FXML
+    private Button deleteButton;
+
+    @FXML
+    private Button assignButton;
+
+    @FXML
+    private Button statusButton;
+
+    @FXML
+    private Button rateButton;
+
     private final ObservableList<ServiceRequest> requests = FXCollections.observableArrayList();
     private final List<User> users = new ArrayList<>();
     private final Map<Integer, User> usersById = new HashMap<>();
@@ -98,11 +116,11 @@ public class RequestsController {
         descriptionColumn.setCellValueFactory(cell ->
                 new ReadOnlyStringWrapper(cell.getValue().getDescription()));
         categoryColumn.setCellValueFactory(cell ->
-                new ReadOnlyStringWrapper(cell.getValue().getCategory().name()));
+                new ReadOnlyStringWrapper(cell.getValue().getCategory().toString()));
         statusColumn.setCellValueFactory(cell ->
-                new ReadOnlyStringWrapper(cell.getValue().getStatus().name()));
+                new ReadOnlyStringWrapper(cell.getValue().getStatus().toString()));
         priorityColumn.setCellValueFactory(cell ->
-                new ReadOnlyStringWrapper(cell.getValue().getPriority().name()));
+                new ReadOnlyStringWrapper(cell.getValue().getPriority().toString()));
         clientColumn.setCellValueFactory(cell ->
                 new ReadOnlyStringWrapper(userName(cell.getValue().getClientId())));
         executorColumn.setCellValueFactory(cell ->
@@ -118,6 +136,14 @@ public class RequestsController {
 
         requestsTable.setItems(requests);
         requestsTable.setPlaceholder(new Label("Заявки не найдены"));
+
+        for (Button button : List.of(
+                editButton, deleteButton, assignButton, statusButton, rateButton)) {
+            button.disableProperty().bind(
+                    requestsTable.getSelectionModel().selectedItemProperty().isNull());
+        }
+        requestsTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldRequest, selectedRequest) -> updateSelectionLabel(selectedRequest));
     }
 
     public void setServices(ServiceRequestService requestService, UserService userService) {
@@ -351,6 +377,15 @@ public class RequestsController {
             AlertHelper.showWarning("Заявки", "Сначала выберите заявку в таблице");
         }
         return selected;
+    }
+
+    private void updateSelectionLabel(ServiceRequest selected) {
+        if (selected == null) {
+            selectionLabel.setText("Выберите строку в таблице, чтобы работать с заявкой");
+        } else {
+            selectionLabel.setText("Выбрана заявка №" + selected.getId()
+                    + ": " + selected.getTitle());
+        }
     }
 
     private List<User> usersWithRole(UserRole role) {
