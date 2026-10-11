@@ -49,3 +49,81 @@
     -fx-font-size: 16px;
     -fx-text-fill: #526579;
 }
+
+/* ---------- Общие элементы экранов ---------- */
+.screen {
+    -fx-max-width: infinity;
+    -fx-max-height: infinity;
+}
+
+.toolbar .button {
+    -fx-padding: 7px 14px;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.primary-button {
+    -fx-background-color: #2f6fb3;
+    -fx-text-fill: white;
+    -fx-background-radius: 4px;
+}
+
+.primary-button:hover {
+    -fx-background-color: #255d97;
+}
+
+.danger-button {
+    -fx-background-color: #fbe9e9;
+    -fx-text-fill: #b42318;
+    -fx-border-color: #f1b8b3;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.danger-button:hover {
+    -fx-background-color: #f6d4d2;
+}
+
+.hint-text {
+    -fx-text-fill: #6b7c8f;
+    -fx-font-size: 13px;
+}
+
+/* ---------- Таблицы ---------- */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #dce4ed;
+    -fx-font-size: 13px;
+}
+
+.table-view .column-header {
+    -fx-background-color: #eaf0f7;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #cfe0f3;
+    -fx-table-cell-border-color: #cfe0f3;
+}
+
+.table-row-cell:selected .text {
+    -fx-fill: #1f3a5f;
+}
+
+/* ---------- Формы и ошибки ---------- */
+.form-dialog .label {
+    -fx-text-fill: #294563;
+}
+
+.form-dialog .text-field,
+.form-dialog .combo-box {
+    -fx-pref-height: 30px;
+}
+
+.error-text {
+    -fx-text-fill: #b42318;
+    -fx-background-color: #fdeceb;
+    -fx-padding: 8px 10px;
+    -fx-background-radius: 4px;
+    -fx-max-width: infinity;
+}

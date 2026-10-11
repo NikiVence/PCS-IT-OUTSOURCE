@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+
+<DialogPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.mirea.project.ui.UserFormController"
+            prefWidth="460.0" styleClass="form-dialog">
+    <buttonTypes>
+        <ButtonType fx:constant="OK"/>
+        <ButtonType fx:constant="CANCEL"/>
+    </buttonTypes>
+    <content>
+        <VBox spacing="12.0">
+            <GridPane hgap="12.0" vgap="10.0">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="90.0"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <Label text="Логин *" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="usernameField" promptText="от 3 до 50 символов"
+                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="ФИО *" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="fullNameField" promptText="Иванов Иван Иванович"
+                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Email *" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="emailField" promptText="user@mail.ru"
+                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <Label text="Роль *" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="roleComboBox" maxWidth="Infinity" promptText="Выберите роль"
+                          GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            </GridPane>
+            <Label fx:id="errorLabel" styleClass="error-text" wrapText="true"
+                   visible="false" managed="false"/>
+        </VBox>
+    </content>
+</DialogPane>

@@ -1,11 +1,15 @@
 package ru.mirea.project.ui;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+
+import java.io.IOException;
 
 public class MainController {
 
@@ -33,7 +37,8 @@ public class MainController {
 
     @FXML
     private void showUsers() {
-        showSection(usersButton, "Пользователи");
+        selectButton(usersButton);
+        loadView("/ru/mirea/project/view/users-view.fxml");
     }
 
     @FXML
@@ -41,11 +46,25 @@ public class MainController {
         showSection(statisticsButton, "Статистика");
     }
 
-    private void showSection(Button selectedButton, String sectionName) {
+    private void selectButton(Button selectedButton) {
         requestsButton.getStyleClass().remove("selected");
         usersButton.getStyleClass().remove("selected");
         statisticsButton.getStyleClass().remove("selected");
         selectedButton.getStyleClass().add("selected");
+    }
+
+    /** Загружает экран из FXML и показывает его в области содержимого. */
+    private void loadView(String fxmlPath) {
+        try {
+            Parent view = FXMLLoader.load(getClass().getResource(fxmlPath));
+            showContent(view);
+        } catch (IOException e) {
+            AlertHelper.showError("Ошибка", "Не удалось открыть экран: " + fxmlPath);
+        }
+    }
+
+    private void showSection(Button selectedButton, String sectionName) {
+        selectButton(selectedButton);
 
         Label title = new Label(sectionName);
         title.getStyleClass().add("section-title");
