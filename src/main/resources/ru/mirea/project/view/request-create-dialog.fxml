@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+
+<GridPane xmlns="http://javafx.com/javafx/21"
+          xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="ru.mirea.project.ui.RequestCreateDialogController"
+          hgap="12.0" vgap="12.0" styleClass="dialog-form">
+    <padding>
+        <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+    </padding>
+    <columnConstraints>
+        <ColumnConstraints minWidth="100.0"/>
+        <ColumnConstraints minWidth="340.0" hgrow="ALWAYS"/>
+    </columnConstraints>
+
+    <Label text="Заголовок" styleClass="field-label" GridPane.rowIndex="0"/>
+    <TextField fx:id="titleField" promptText="Кратко опишите проблему"
+               GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+    <Label text="Описание" styleClass="field-label" GridPane.rowIndex="1"/>
+    <TextArea fx:id="descriptionArea" promptText="Подробное описание"
+              prefRowCount="4" wrapText="true"
+              GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+    <Label text="Категория" styleClass="field-label" GridPane.rowIndex="2"/>
+    <ComboBox fx:id="categoryBox" maxWidth="Infinity"
+              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+    <Label text="Приоритет" styleClass="field-label" GridPane.rowIndex="3"/>
+    <ComboBox fx:id="priorityBox" maxWidth="Infinity"
+              GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+    <Label text="Клиент" styleClass="field-label" GridPane.rowIndex="4"/>
+    <ComboBox fx:id="clientBox" maxWidth="Infinity"
+              GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+</GridPane>

@@ -1,13 +1,21 @@
 package ru.mirea.project.ui;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import ru.mirea.project.service.ServiceRequestService;
+import ru.mirea.project.service.UserService;
+
+import java.io.IOException;
 
 public class MainController {
+
+    private final UserService userService = new UserService();
+    private final ServiceRequestService requestService = new ServiceRequestService();
 
     @FXML
     private StackPane contentArea;
@@ -28,7 +36,19 @@ public class MainController {
 
     @FXML
     private void showRequests() {
-        showSection(requestsButton, "Заявки");
+        selectButton(requestsButton);
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/ru/mirea/project/view/requests-view.fxml"));
+            Node view = loader.load();
+
+            RequestsController controller = loader.getController();
+            controller.setServices(requestService, userService);
+            showContent(view);
+        } catch (IOException e) {
+            AlertHelper.showError("Ошибка", "Не удалось открыть экран заявок");
+        }
     }
 
     @FXML
@@ -42,10 +62,7 @@ public class MainController {
     }
 
     private void showSection(Button selectedButton, String sectionName) {
-        requestsButton.getStyleClass().remove("selected");
-        usersButton.getStyleClass().remove("selected");
-        statisticsButton.getStyleClass().remove("selected");
-        selectedButton.getStyleClass().add("selected");
+        selectButton(selectedButton);
 
         Label title = new Label(sectionName);
         title.getStyleClass().add("section-title");
@@ -55,6 +72,13 @@ public class MainController {
 
         VBox placeholder = new VBox(12, title, message);
         showContent(placeholder);
+    }
+
+    private void selectButton(Button selectedButton) {
+        requestsButton.getStyleClass().remove("selected");
+        usersButton.getStyleClass().remove("selected");
+        statisticsButton.getStyleClass().remove("selected");
+        selectedButton.getStyleClass().add("selected");
     }
 
     public void showContent(Node content) {
