@@ -21,14 +21,45 @@
 
 ## Требования для запуска
 
+- Docker Desktop с Docker Compose v2.
 - JDK 21.
 - Maven 3.9 или новее.
-- PostgreSQL (проверено на версии 17).
 - Доступ к Maven Central при первой сборке для загрузки зависимостей.
+
+Локально устанавливать PostgreSQL не нужно: PostgreSQL 17 запускается в Docker.
+JavaFX по требованиям КР 2 запускается отдельно на компьютере и
+подключается к контейнерной БД по JDBC. Подробно: [запуск PostgreSQL в Docker](docs/docker.md).
 
 Зависимости: PostgreSQL JDBC 42.7.14, Apache POI 5.5.1; тесты — JUnit 5.
 
-## Подготовка базы данных
+## Первый запуск с Docker
+
+1. Создайте локальные конфиги из шаблонов:
+
+```shell
+cp .env.example .env
+cp src/main/resources/db.properties.example src/main/resources/db.properties
+```
+
+2. Запустите PostgreSQL и дождитесь healthcheck:
+
+```shell
+docker compose up -d --wait
+docker compose ps
+```
+
+3. Запустите JavaFX на компьюте:
+
+```shell
+mvn javafx:run
+```
+
+Первый запуск создаёт базу, схему, 6 пользователей и 12 заявок. Данные
+хранятся в Docker volume и не исчезают после `docker compose down`.
+
+## Ручная подготовка базы без Docker
+
+Этот способ нужен только если вы осознанно используете локально установленный PostgreSQL.
 
 Выполните из корня проекта, заменив `postgres` на своего пользователя PostgreSQL:
 
@@ -63,9 +94,9 @@ cp src/main/resources/db.properties.example src/main/resources/db.properties
 В `src/main/resources/db.properties` задайте свои реквизиты:
 
 ```properties
-db.url=jdbc:postgresql://localhost:5432/it_outsource
-db.user=YOUR_USERNAME
-db.password=YOUR_PASSWORD
+db.url=jdbc:postgresql://localhost:55432/it_outsource
+db.user=it_outsource_app
+db.password=it_outsource_local_password
 ```
 
 Этот файл исключён из Git. Приложение читает его из classpath; после изменения настроек снова выполните `mvn compile`.

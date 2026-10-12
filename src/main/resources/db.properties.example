@@ -3,11 +3,12 @@
 # ============================================================
 # Как использовать:
 #   1. Скопируй этот файл в db.properties
-#   2. Впиши свои данные (username и password от PostgreSQL)
+#   2. Значения ниже совпадают с .env.example для Docker PostgreSQL.
+#      Если вы изменили логин, пароль или порт в .env, измените их и здесь.
 #
 #   cp src/main/resources/db.properties.example src/main/resources/db.properties
 # ============================================================
 
-db.url=jdbc:postgresql://localhost:5432/it_outsource
-db.user=YOUR_USERNAME
-db.password=YOUR_PASSWORD
+db.url=jdbc:postgresql://localhost:55432/it_outsource
+db.user=it_outsource_app
+db.password=it_outsource_local_password

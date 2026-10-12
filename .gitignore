@@ -24,6 +24,7 @@ logs/
 *.sql.bak
 
 # Local DB credentials
+.env
 src/main/resources/db.properties
 
 # Generated reports and local build cache

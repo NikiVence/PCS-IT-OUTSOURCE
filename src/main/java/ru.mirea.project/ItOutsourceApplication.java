@@ -16,7 +16,7 @@ public class ItOutsourceApplication extends Application {
                 getClass().getResource("/ru/mirea/project/view/main-view.fxml"));
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 800, 500);
+        Scene scene = new Scene(root, 800, 800);
         scene.getStylesheets().add(
                 getClass().getResource("/ru/mirea/project/view/main.css").toExternalForm());
 
