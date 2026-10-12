@@ -74,6 +74,24 @@ class ExcelExportServiceTest {
     }
 
     @Test
+    void appendsExtensionWhenFileNameHasNone() throws Exception {
+        Path file = exporter.export(directory.resolve("отчёт"), List.of(), List.of(), Map.of());
+        assertEquals(directory.resolve("отчёт.xlsx"), file);
+        try (var input = Files.newInputStream(file); var workbook = new XSSFWorkbook(input)) {
+            assertEquals(3, workbook.getNumberOfSheets());
+        }
+    }
+
+    @Test
+    void reportsInvalidParentWithoutReplacingIt() throws Exception {
+        Path parent = directory.resolve("not-a-directory");
+        Files.writeString(parent, "original");
+        assertThrows(java.io.IOException.class,
+                () -> exporter.export(parent.resolve("report.xlsx"), List.of(), List.of(), Map.of()));
+        assertEquals("original", Files.readString(parent));
+    }
+
+    @Test
     void rejectsWrongExtensionWithoutCreatingFile() {
         Path file = directory.resolve("report.csv");
         assertThrows(IllegalArgumentException.class,

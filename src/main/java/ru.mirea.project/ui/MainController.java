@@ -4,10 +4,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import ru.mirea.project.service.ExcelExportService;
 import ru.mirea.project.service.ServiceRequestService;
 import ru.mirea.project.service.UserService;
 
@@ -60,7 +59,17 @@ public class MainController {
 
     @FXML
     private void showStatistics() {
-        showSection(statisticsButton, "Статистика");
+        selectButton(statisticsButton);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/ru/mirea/project/view/statistics-view.fxml"));
+            Node view = loader.load();
+            StatisticsController controller = loader.getController();
+            controller.setServices(requestService, userService, new ExcelExportService());
+            showContent(view);
+        } catch (IOException e) {
+            AlertHelper.showError("Ошибка", "Не удалось открыть экран статистики");
+        }
     }
 
     /** Загружает экран из FXML и показывает его в области содержимого. */
@@ -71,19 +80,6 @@ public class MainController {
         } catch (IOException e) {
             AlertHelper.showError("Ошибка", "Не удалось открыть экран: " + fxmlPath);
         }
-    }
-
-    private void showSection(Button selectedButton, String sectionName) {
-        selectButton(selectedButton);
-
-        Label title = new Label(sectionName);
-        title.getStyleClass().add("section-title");
-
-        Label message = new Label("Раздел находится в разработке");
-        message.getStyleClass().add("body-text");
-
-        VBox placeholder = new VBox(12, title, message);
-        showContent(placeholder);
     }
 
     private void selectButton(Button selectedButton) {

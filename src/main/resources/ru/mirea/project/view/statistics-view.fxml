@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ru.mirea.project.ui.StatisticsController" spacing="12">
+    <Label text="Статистика" styleClass="section-title"/>
+    <Label text="Все пользователи и заявки. Активные заявки — в работе или в ожидании."
+           wrapText="true" styleClass="hint-text"/>
+    <HBox spacing="10">
+        <Button fx:id="refreshButton" text="Обновить" onAction="#refreshData" styleClass="secondary-button"/>
+        <Button fx:id="exportButton" text="Экспорт в Excel" onAction="#exportReport" styleClass="primary-button"/>
+    </HBox>
+    <TableView fx:id="statisticsTable" VBox.vgrow="ALWAYS" prefHeight="260" minHeight="180"
+               fixedCellSize="28" styleClass="requests-table">
+        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+        <columns>
+            <TableColumn fx:id="metricColumn" text="Показатель" prefWidth="310" sortable="false"/>
+            <TableColumn fx:id="valueColumn" text="Значение" prefWidth="120" sortable="false"/>
+        </columns>
+    </TableView>
+    <Label text="Excel: пользователи, заявки, статистика. Выберите новое имя файла."
+           wrapText="true" styleClass="hint-text"/>
+    <Label fx:id="statusLabel" text="" wrapText="true" styleClass="hint-text"/>
+</VBox>

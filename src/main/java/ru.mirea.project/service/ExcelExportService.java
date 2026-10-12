@@ -34,6 +34,9 @@ public class ExcelExportService {
     public Path export(Path destination, List<User> users, List<ServiceRequest> requests,
                        Map<String, Number> statistics) throws IOException {
         Path file = destination.toAbsolutePath().normalize();
+        if (file.getFileName() != null && !file.getFileName().toString().contains(".")) {
+            file = file.resolveSibling(file.getFileName().toString() + ".xlsx");
+        }
         if (file.getFileName() == null
                 || !file.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".xlsx")) {
             throw new IllegalArgumentException("Укажите имя файла с расширением .xlsx");
