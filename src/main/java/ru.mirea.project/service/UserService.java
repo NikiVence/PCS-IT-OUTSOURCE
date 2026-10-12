@@ -8,8 +8,12 @@ import ru.mirea.project.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class UserService {
+
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
     private final UserRepository userRepository;
 
@@ -23,12 +27,7 @@ public class UserService {
 
     public User createUser(String username, String fullName,
                            String email, UserRole role) throws BusinessException {
-        requireText(username, "Имя пользователя");
-        requireText(fullName, "ФИО");
-        requireText(email, "Email");
-        if (role == null) {
-            throw new BusinessException("Роль пользователя обязательна");
-        }
+        validateUser(username, fullName, email, role);
 
         User user = new User(username.trim(), fullName.trim(), email.trim(), role);
         return userRepository.create(user);
@@ -51,12 +50,7 @@ public class UserService {
     public User updateUser(Integer id, String username, String fullName,
                            String email, UserRole role)
             throws EntityNotFoundException, BusinessException {
-        requireText(username, "Имя пользователя");
-        requireText(fullName, "ФИО");
-        requireText(email, "Email");
-        if (role == null) {
-            throw new BusinessException("Роль пользователя обязательна");
-        }
+        validateUser(username, fullName, email, role);
 
         User user = getUserById(id);
         user.setUsername(username.trim());
@@ -76,9 +70,34 @@ public class UserService {
         }
     }
 
+    private void validateUser(String username, String fullName,
+                              String email, UserRole role) throws BusinessException {
+        requireText(username, "Логин");
+        requireText(fullName, "ФИО");
+        requireText(email, "Email");
+        requireLength(username, "Логин", 3, 50);
+        requireLength(fullName, "ФИО", 2, 100);
+        requireLength(email, "Email", 5, 100);
+        if (!EMAIL_PATTERN.matcher(email.trim()).matches()) {
+            throw new BusinessException("Email указан в неверном формате (пример: user@mail.ru)");
+        }
+        if (role == null) {
+            throw new BusinessException("Роль пользователя обязательна");
+        }
+    }
+
+    private void requireLength(String value, String fieldName, int min, int max)
+            throws BusinessException {
+        int length = value.trim().length();
+        if (length < min || length > max) {
+            throw new BusinessException(
+                    "Поле «" + fieldName + "» должно содержать от " + min + " до " + max + " символов");
+        }
+    }
+
     private void requireText(String value, String fieldName) throws BusinessException {
         if (value == null || value.isBlank()) {
-            throw new BusinessException(fieldName + " не должно быть пустым");
+            throw new BusinessException("Поле «" + fieldName + "» не должно быть пустым");
         }
     }
 }

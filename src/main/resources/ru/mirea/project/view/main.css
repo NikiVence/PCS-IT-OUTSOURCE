@@ -75,33 +75,40 @@
     -fx-alignment: center-left;
 }
 
-.requests-table {
+.requests-table,
+.users-table {
     -fx-background-color: white;
     -fx-border-color: #dce4ed;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
 }
 
-.requests-table .column-header-background {
+.requests-table .column-header-background,
+.users-table .column-header-background {
     -fx-background-color: #eaf0f7;
 }
 
 .requests-table .column-header,
-.requests-table .filler {
+.requests-table .filler,
+.users-table .column-header,
+.users-table .filler {
     -fx-background-color: transparent;
 }
 
-.requests-table .column-header .label {
+.requests-table .column-header .label,
+.users-table .column-header .label {
     -fx-alignment: center-left;
     -fx-text-fill: #294563;
     -fx-font-weight: bold;
 }
 
-.requests-table .table-row-cell:selected {
+.requests-table .table-row-cell:selected,
+.users-table .table-row-cell:selected {
     -fx-background-color: #d5e3f2;
 }
 
-.requests-table .table-row-cell:selected .text {
+.requests-table .table-row-cell:selected .text,
+.users-table .table-row-cell:selected .text {
     -fx-fill: #1f3a5f;
 }
 
@@ -142,4 +149,36 @@
 .field-label {
     -fx-font-weight: bold;
     -fx-text-fill: #294563;
+}
+
+/* ---------- Экран пользователей: подсказки, форма и ошибки ---------- */
+.hint-text {
+    -fx-text-fill: #6b7c8f;
+    -fx-font-size: 13px;
+}
+
+.form-dialog .label {
+    -fx-text-fill: #294563;
+}
+
+.error-text {
+    -fx-text-fill: #b42318;
+    -fx-background-color: #fdeceb;
+    -fx-padding: 8px 10px;
+    -fx-background-radius: 4px;
+    -fx-max-width: infinity;
+}
+
+/* ---------- Панель поиска, фильтров и сортировки ---------- */
+.filter-panel {
+    -fx-padding: 12px 14px;
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-border-color: #dce4ed;
+    -fx-border-radius: 6px;
+}
+
+.filter-label {
+    -fx-text-fill: #526579;
+    -fx-font-size: 13px;
 }

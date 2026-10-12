@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ru.mirea.project.ui.UsersController"
+      spacing="14.0">
+
+    <Label text="Пользователи" styleClass="section-title"/>
+
+    <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <Button text="Добавить" onAction="#onAdd" styleClass="primary-button"/>
+        <Button fx:id="editButton" text="Редактировать" onAction="#onEdit"
+                styleClass="secondary-button"/>
+        <Button fx:id="deleteButton" text="Удалить" onAction="#onDelete"
+                styleClass="danger-button"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="countLabel" styleClass="hint-text"/>
+        <Button text="Обновить" onAction="#onRefresh" styleClass="secondary-button"/>
+    </HBox>
+
+    <TableView fx:id="usersTable" VBox.vgrow="ALWAYS" styleClass="users-table">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="45.0" maxWidth="70.0"/>
+            <TableColumn fx:id="usernameColumn" text="Логин" prefWidth="100.0"/>
+            <TableColumn fx:id="fullNameColumn" text="ФИО" prefWidth="190.0"/>
+            <TableColumn fx:id="emailColumn" text="Email" prefWidth="170.0"/>
+            <TableColumn fx:id="roleColumn" text="Роль" prefWidth="100.0"/>
+            <TableColumn fx:id="createdAtColumn" text="Дата создания" prefWidth="125.0"/>
+        </columns>
+    </TableView>
+</VBox>

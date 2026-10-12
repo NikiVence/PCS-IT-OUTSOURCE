@@ -39,7 +39,7 @@ public class UserRepository implements CrudRepository<User> {
                 return mapRow(resultSet);
             }
         } catch (SQLException e) {
-            throw new DatabaseException("Не удалось создать пользователя", e);
+            throw translate(e, "Не удалось создать пользователя");
         }
     }
 
@@ -105,7 +105,7 @@ public class UserRepository implements CrudRepository<User> {
             statement.setObject(5, user.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DatabaseException("Не удалось обновить пользователя", e);
+            throw translate(e, "Не удалось обновить пользователя");
         }
     }
 
@@ -118,8 +118,33 @@ public class UserRepository implements CrudRepository<User> {
             statement.setObject(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DatabaseException("Не удалось удалить пользователя", e);
+            throw translate(e, "Не удалось удалить пользователя");
         }
+    }
+
+    /**
+     * Переводит ошибки ограничений PostgreSQL в понятные пользователю сообщения.
+     * Коды SQLState: 23505 — нарушение UNIQUE, 23503 — нарушение внешнего ключа,
+     * 23514 — нарушение CHECK.
+     */
+    private DatabaseException translate(SQLException e, String defaultMessage) {
+        String state = e.getSQLState();
+        String details = e.getMessage() == null ? "" : e.getMessage();
+
+        if ("23505".equals(state) && details.contains("users_username_key")) {
+            return new DatabaseException("Пользователь с таким логином уже существует", e);
+        }
+        if ("23505".equals(state) && details.contains("users_email_key")) {
+            return new DatabaseException("Пользователь с таким email уже существует", e);
+        }
+        if ("23503".equals(state)) {
+            return new DatabaseException(
+                    "Нельзя удалить пользователя: он является клиентом в существующих заявках", e);
+        }
+        if ("23514".equals(state) && details.contains("chk_users_username_len")) {
+            return new DatabaseException("Логин должен содержать не менее 3 символов", e);
+        }
+        return new DatabaseException(defaultMessage, e);
     }
 
     private User mapRow(ResultSet resultSet) throws SQLException {

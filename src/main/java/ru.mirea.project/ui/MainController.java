@@ -2,6 +2,7 @@ package ru.mirea.project.ui;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.Node;
@@ -53,12 +54,23 @@ public class MainController {
 
     @FXML
     private void showUsers() {
-        showSection(usersButton, "Пользователи");
+        selectButton(usersButton);
+        loadView("/ru/mirea/project/view/users-view.fxml");
     }
 
     @FXML
     private void showStatistics() {
         showSection(statisticsButton, "Статистика");
+    }
+
+    /** Загружает экран из FXML и показывает его в области содержимого. */
+    private void loadView(String fxmlPath) {
+        try {
+            Parent view = FXMLLoader.load(getClass().getResource(fxmlPath));
+            showContent(view);
+        } catch (IOException e) {
+            AlertHelper.showError("Ошибка", "Не удалось открыть экран: " + fxmlPath);
+        }
     }
 
     private void showSection(Button selectedButton, String sectionName) {
