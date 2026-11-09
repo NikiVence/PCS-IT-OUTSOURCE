@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: it-outsource-backend
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:${POSTGRES_PORT:55433}/${POSTGRES_DB:it_outsource_kr3}
+    username: ${POSTGRES_USER:it_outsource_app}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
